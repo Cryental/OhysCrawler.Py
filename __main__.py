@@ -64,7 +64,7 @@ def main():
 
         try:
             for i in range(0, 150):
-                req = urllib.request.Request('http://torrents.ohys.net/t/json.php?dir=disk&p={}'.format(str(i)),
+                req = urllib.request.Request('http://eu.ohys.net/t/json.php?dir=disk&p={}'.format(str(i)),
                                              headers=headers)
                 response = urllib.request.urlopen(req)
                 contents = response.read()
