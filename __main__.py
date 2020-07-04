@@ -76,7 +76,7 @@ def main():
                     decoded_file_name = html.unescape(item['t'])
                     if not os.path.isfile('torrents\\' + decoded_file_name) or os.stat(
                             'torrents\\' + decoded_file_name).st_size == 0:
-                        urllib.request.urlretrieve('http://torrents.ohys.net/t/' + item['a'],
+                        urllib.request.urlretrieve('http://eu.ohys.net/t/' + item['a'],
                                                    'torrents\\' + decoded_file_name)
                         color.color_print(Fore.LIGHTGREEN_EX, '[DOWNLOADED]', decoded_file_name)
                         new_torrent_state = True
