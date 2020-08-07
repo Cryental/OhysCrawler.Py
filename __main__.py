@@ -7,7 +7,9 @@ import json
 import os
 import sys
 import time
-import urllib.request
+import asyncio
+import aiohttp
+import aiofiles
 
 from colorama import init, Fore
 
@@ -19,7 +21,7 @@ def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def main():
+async def main():
     init()
 
     crawl_new_torrent_only = True
@@ -64,28 +66,28 @@ def main():
 
         try:
             for i in range(0, 150):
-                req = urllib.request.Request('http://eu.ohys.net/t/json.php?dir=disk&p={}'.format(str(i)),
-                                             headers=headers)
-                response = urllib.request.urlopen(req)
-                contents = response.read()
-                contents_array = json.loads(contents)
+                async with aiohttp.ClientSession() as session:
+                    async with session.get('http://eu.ohys.net/t/json.php?dir=disk&p={}'.format(str(i)),headers=headers) as req:
+                        contents_array = json.loads(await req.text())
 
-                if len(contents_array) == 0:
-                    break
-                for item in contents_array:
-                    decoded_file_name = html.unescape(item['t'])
-                    if not os.path.isfile('torrents\\' + decoded_file_name) or os.stat(
-                            'torrents\\' + decoded_file_name).st_size == 0:
-                        urllib.request.urlretrieve('http://eu.ohys.net/t/' + item['a'],
-                                                   'torrents\\' + decoded_file_name)
-                        color.color_print(Fore.LIGHTGREEN_EX, '[DOWNLOADED]', decoded_file_name)
-                        new_torrent_state = True
-                    elif crawl_new_torrent_only:
-                        cancel_crawling_state = True
-                    else:
-                        color.color_print(Fore.LIGHTRED_EX, '[SKIPPED]', decoded_file_name)
-                if cancel_crawling_state:
-                    break
+                        if len(contents_array) == 0:
+                            break
+                        for item in contents_array:
+                            decoded_file_name = html.unescape(item['t'])
+                            if not os.path.isfile('torrents/' + decoded_file_name) or os.stat(
+                                    'torrents/' + decoded_file_name).st_size == 0:
+                                async with session.get('http://eu.ohys.net/t/' + item['a']) as file_req:
+                                    file = await aiofiles.open('torrents/' + decoded_file_name, mode='wb')
+                                    await file.write(await file_req.read())
+                                    await file.close()
+                                color.color_print(Fore.LIGHTGREEN_EX, '[DOWNLOADED]', decoded_file_name)
+                                new_torrent_state = True
+                            elif crawl_new_torrent_only:
+                                cancel_crawling_state = True
+                            else:
+                                color.color_print(Fore.LIGHTRED_EX, '[SKIPPED]', decoded_file_name)
+                        if cancel_crawling_state:
+                            break
         except:
             pass
 
@@ -103,4 +105,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+    loop.close()

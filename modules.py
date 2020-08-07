@@ -41,15 +41,15 @@ def database_builder():
         anime_database_file = open('anime_database.json', encoding='utf-8')
         anime_database_obj = json.load(anime_database_file)
 
-    if os.path.isfile('output\\database_original.json'):
-        origin_database_json_file = open('output\\database_original.json', encoding='utf-8')
+    if os.path.isfile('output/database_original.json'):
+        origin_database_json_file = open('output/database_original.json', encoding='utf-8')
 
         try:
             origin_database_obj = json.load(origin_database_json_file)
             origin_database_loaded = True
         except:
             origin_database_loaded = False
-        database_json_file = open('output\\database.json', encoding='utf-8')
+        database_json_file = open('output/database.json', encoding='utf-8')
 
         try:
             database_obj = json.load(database_json_file)
@@ -72,7 +72,7 @@ def database_builder():
 
     for i in list_torrents_dir:
         torrent_filename = i
-        torrent_full_path = 'torrents\\' + i
+        torrent_full_path = 'torrents/' + i
         with open(torrent_full_path, 'rb') as fh:
             torrent_data = fh.read()
 
@@ -203,31 +203,31 @@ def database_builder():
 
         color.color_print(Fore.YELLOW, '[PROCESSING]', 'DISK ACCESSING')
 
-        with open('output\\database.json', 'w') as outfile:
+        with open('output/database.json', 'w') as outfile:
             color.color_print(Fore.YELLOW, '[PROCESSING]', 'WRITING LIST')
             json.dump(list_database, outfile)
 
         color.color_print(Fore.YELLOW, '[PROCESSING]', 'DISK ACCESSING')
-        with open('output\\database_original.json', 'w') as outfile:
+        with open('output/database_original.json', 'w') as outfile:
             color.color_print(Fore.YELLOW, '[PROCESSING]', 'WRITING LIST ORIGINAL')
             json.dump(list_origin_database, outfile)
 
         color.color_print(Fore.YELLOW, '[PROCESSING]', 'WRITING UPDATED DATE')
         today = datetime.now()
-        new_days = open('output\\updated_on.txt', 'w')
+        new_days = open('output/updated_on.txt', 'w')
         new_days.write(today.strftime("%Y-%m-%d %H:%M:%S"))
         new_days.close()
 
         color.color_print(Fore.YELLOW, '[PROCESSING]', 'WRITING HASH FILES')
-        database_md5 = str(md5('output\\database.json'));
-        origin_database_md5 = str(md5('output\\database_original.json'));
-        updated_md5 = str(md5('output\\updated_on.txt'));
+        database_md5 = str(md5('output/database.json'));
+        origin_database_md5 = str(md5('output/database_original.json'));
+        updated_md5 = str(md5('output/updated_on.txt'));
 
-        with open('output\\database.json.md5', 'w') as outfile:
+        with open('output/database.json.md5', 'w') as outfile:
             outfile.write(database_md5)
-        with open('output\\database_original.json.md5', 'w') as outfile:
+        with open('output/database_original.json.md5', 'w') as outfile:
             outfile.write(origin_database_md5)
-        with open('output\\updated_on.txt.md5', 'w') as outfile:
+        with open('output/updated_on.txt.md5', 'w') as outfile:
             outfile.write(updated_md5)
 
     color.color_print(Fore.YELLOW, '[DONE]', 'COMPLETED\n')
