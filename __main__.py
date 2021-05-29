@@ -67,7 +67,7 @@ async def main():
         try:
             for i in range(0, 150):
                 async with aiohttp.ClientSession() as session:
-                    async with session.get('http://eu.ohys.net/t/json.php?dir=disk&p={}'.format(str(i)),headers=headers) as req:
+                    async with session.get('https://ohys.nl/tt/json.php?dir=disk&p={}'.format(str(i)),headers=headers) as req:
                         contents_array = json.loads(await req.text())
 
                         if len(contents_array) == 0:
@@ -76,7 +76,7 @@ async def main():
                             decoded_file_name = html.unescape(item['t'])
                             if not os.path.isfile('torrents/' + decoded_file_name) or os.stat(
                                     'torrents/' + decoded_file_name).st_size == 0:
-                                async with session.get('http://eu.ohys.net/t/' + item['a']) as file_req:
+                                async with session.get('https://ohys.nl/tt/' + item['a']) as file_req:
                                     file = await aiofiles.open('torrents/' + decoded_file_name, mode='wb')
                                     await file.write(await file_req.read())
                                     await file.close()
